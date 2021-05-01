@@ -6,8 +6,10 @@ class MyBatchGDRegression:
         self.intercept_ = 0.0
         self.coef_ = []
 
-    def fit(self, x, y, learningRate=0.001, noEpochs=1000):
+    # lr = 0.01 epochs = 100 for univariate best results with tool scaler
+    def fit(self, x, y, learningRate=0.1, noEpochs=1000):
         self.coef_ = [random.random() for _ in range(len(x[0]) + 1)]
+        # self.coef_ = [0.0 for _ in range(len(x[0]) + 1)]
 
         aux = x.copy()
         for epoch in range(noEpochs):

@@ -59,8 +59,11 @@ def split_data(inputs, outputs):
         for i in range(len(validationInputs)):
             yy[j].append(validationInputs[i][j])
 
-    xx, yy = normalisation(xx, yy)
-    trainOutputs, validationOutputs = normalisation(trainOutputs, validationOutputs)
+    # xx, yy = normalisation(xx, yy)
+    # trainOutputs, validationOutputs = normalisation(trainOutputs, validationOutputs)
+
+    xx, yy = myNormalisation(xx, yy)
+    trainOutputs, validationOutputs = myNormalisation(trainOutputs, validationOutputs)
 
     # feature1train = [ex[0] for ex in xx]
     # feature2train = [ex[1] for ex in xx]
@@ -130,6 +133,49 @@ def normalisation(trainData, testData):
         normalisedTestData = scaler.transform(testData)  # apply same transformation to test data
     return normalisedTrainData, normalisedTestData
 
+
+def myNormalisation(trainData, testData):
+    if not isinstance(trainData[0], list):
+        meanValue = sum(trainData) / len(trainData)
+        stdDevValue = (1 / len(trainData) * sum([(feat - meanValue) ** 2 for feat in trainData])) ** 0.5
+        normalisedTrainData = [(feat - meanValue) / stdDevValue for feat in trainData]
+        normalisedTestData = [(feat - meanValue) / stdDevValue for feat in testData]
+        return normalisedTrainData, normalisedTestData
+
+    sumFeature1 = 0.0
+    sumFeature2 = 0.0
+    isBivariate = False
+    for features in trainData:
+        sumFeature1 += features[0]
+        if len(features) == 2:
+            sumFeature2 += features[1]
+            isBivariate = True
+
+    meanFeature1 = sumFeature1 / len(trainData)
+    if len(trainData[0]) == 2:
+        meanFeature2 = sumFeature2 / len(trainData)
+
+    stdDevFeature1 = (1 / len(trainData) * sum([(features[0] - meanFeature1) ** 2 for features in trainData])) ** 0.5
+    if isBivariate:
+        stdDevFeature2 = (1 / len(trainData) * sum([(features[1] - meanFeature2) ** 2 for features in trainData])) ** 0.5
+
+    if isBivariate:
+        normalisedTrainData = [
+            [(features[0] - meanFeature1) / stdDevFeature1, (features[1] - meanFeature2) / stdDevFeature2] for features in
+            trainData]
+        normalisedTestData = [
+            [(features[0] - meanFeature1) / stdDevFeature1, (features[1] - meanFeature2) / stdDevFeature2] for features in
+            testData]
+    else:
+        normalisedTrainData = [
+            [(features[0] - meanFeature1) / stdDevFeature1] for features
+            in
+            trainData]
+        normalisedTestData = [
+            [(features[0] - meanFeature1) / stdDevFeature1] for features
+            in
+            testData]
+    return normalisedTrainData, normalisedTestData
 
 
 def plot3Ddata(x1Train, x2Train, yTrain, x1Model=None, x2Model=None, yModel=None, x1Test=None, x2Test=None, yTest=None,
