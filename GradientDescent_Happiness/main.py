@@ -5,7 +5,6 @@ from MyBatchGDRegression.MyBatchGDRegression import *
 from BatchGDRegression.BatchGDRegression import *
 from sklearn.metrics import mean_squared_error
 
-
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -39,3 +38,4 @@ plot_computed_outputs_univariate(validationInputs, validationOutputs, computedVa
 
 error = mean_squared_error(validationOutputs, computedValidationOutputs)
 print('prediction error (tool):  ', error)
+
